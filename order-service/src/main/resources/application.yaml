@@ -12,7 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
   application:
-    name: ORDER_SERVICE
+    name: ORDER-SERVICE
   config:
     import: configserver:http://localhost:9296
 

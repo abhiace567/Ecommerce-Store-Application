@@ -18,4 +18,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), exception.getErrorCode()),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStockException(InsufficientStockException exception) {
+        log.error(exception.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), exception.getErrorCode()),
+                HttpStatus.NOT_ACCEPTABLE);
+    }
 }

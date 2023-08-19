@@ -1,6 +1,7 @@
 package github.abhiace.ecomstore.productservice.service;
 
 import github.abhiace.ecomstore.productservice.entity.Product;
+import github.abhiace.ecomstore.productservice.exception.InsufficientStockException;
 import github.abhiace.ecomstore.productservice.exception.ProductNotFoundException;
 import github.abhiace.ecomstore.productservice.model.ProductRequest;
 import github.abhiace.ecomstore.productservice.model.ProductResponse;
@@ -39,9 +40,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getProductById(long productId) {
         log.info("Looking for Product in DB");
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(
-                        String.format("Product by Id %d is Not Found", productId), "PRODUCT_NOT_FOUND"));
+        Product product = getProductEntityById(productId);
 
         ProductResponse productResponse = new ProductResponse(product.getProductId(), product.getProductName(),
                 product.getPrice(), product.getQuantity());
@@ -49,4 +48,26 @@ public class ProductServiceImpl implements ProductService {
 
         return productResponse;
     }
+
+    @Override
+    public void reduceQuantity(long productId, long reduceQuantityBy) {
+        log.info("Looking for Product in DB");
+        Product product = getProductEntityById(productId);
+        log.info("product found with id - {}", productId);
+
+        long productStock = product.getQuantity();
+        if(productStock < reduceQuantityBy)
+            throw new InsufficientStockException("Product dose not have sufficient stock", "INSUFFICIENT_STOCK");
+
+        product.setQuantity(productStock - reduceQuantityBy);
+        productRepository.save(product);
+        log.info("updated quantity to {} for product id {}", product.getQuantity(), productId);
+    }
+
+    public Product getProductEntityById(long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("Product by Id %d is Not Found", productId), "PRODUCT_NOT_FOUND"));
+    }
+
 }

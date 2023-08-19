@@ -1,6 +1,7 @@
 package github.abhiace.ecomstore.orderservice.service;
 
 import github.abhiace.ecomstore.orderservice.entity.Order;
+import github.abhiace.ecomstore.orderservice.external.client.ProductService;
 import github.abhiace.ecomstore.orderservice.model.OrderRequest;
 import github.abhiace.ecomstore.orderservice.model.OrderStatus;
 import github.abhiace.ecomstore.orderservice.repository.OrderRepository;
@@ -15,15 +16,20 @@ import java.time.Instant;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final ProductService productService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, ProductService productService) {
         this.orderRepository = orderRepository;
+        this.productService = productService;
     }
 
     @Override
     public long placeOrder(OrderRequest orderRequest) {
         log.info("Placing order request - {}", orderRequest);
+
+        productService.reduceQuantity(orderRequest.productId(),
+                orderRequest.quantity());
 
         Order order = Order.builder()
                 .productId(orderRequest.productId())
