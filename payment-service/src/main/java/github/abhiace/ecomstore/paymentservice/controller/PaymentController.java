@@ -1,14 +1,12 @@
 package github.abhiace.ecomstore.paymentservice.controller;
 
 import github.abhiace.ecomstore.paymentservice.model.PaymentRequest;
+import github.abhiace.ecomstore.paymentservice.model.PaymentResponse;
 import github.abhiace.ecomstore.paymentservice.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payment")
@@ -27,5 +25,10 @@ public class PaymentController {
                 paymentService.doPayment(paymentRequest),
                 HttpStatus.OK
         );
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<PaymentResponse> getPaymentDetailsByOrderId(@PathVariable long orderId) {
+        return new ResponseEntity<>(paymentService.getPaymentDetailsByOrderId(orderId), HttpStatus.OK);
     }
 }
