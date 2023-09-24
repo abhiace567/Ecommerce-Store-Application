@@ -1,0 +1,5 @@
+create zipkin container -
+    docker run --name zipkin -d -p 9411:9411 openzipkin/zipkin
+
+create redis container -
+    docker run --name redis -v Redis:/data -d -p 6379:6379 redis:alpine
